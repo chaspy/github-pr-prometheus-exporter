@@ -27,7 +27,7 @@ type PR struct {
 
 var (
 	//nolint:gochecknoglobals
-	desiredReplicas = prometheus.NewGauge(prometheus.GaugeOpts{
+	PullRequestCount = prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace: "github_pr",
 		Subsystem: "prometheus_exporter",
 		Name:      "pull_request_count",
@@ -38,7 +38,7 @@ var (
 func main() {
 	const interval = 10
 
-	prometheus.MustRegister(desiredReplicas)
+	prometheus.MustRegister(PullRequestCount)
 
 	http.Handle("/metrics", promhttp.Handler())
 
@@ -76,7 +76,7 @@ func snapshot() error {
 
 	prInfos := getPRInfos(prs)
 
-	desiredReplicas.Set(prInfos)
+	PullRequestCount.Set(prInfos)
 	return nil
 }
 
