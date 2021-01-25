@@ -79,7 +79,31 @@ func snapshot() error {
 
 	prInfos := getPRInfos(prs)
 
-	PullRequestCount.Set(prInfos)
+	var labelsTag []string
+	var reviewersTag []string
+
+	labelsTag = []string{}
+
+	for _, prInfo := range prInfos {
+
+		for _, label := range prInfo.Labels {
+			labelsTag = append(labelsTag, "label:"+*label.Name)
+		}
+
+		for _, reviewer := range prInfo.RequestedReviewers {
+			reviewersTag = append(reviewersTag, "reviewer:"+*reviewer.Login)
+		}
+
+		labels := prometheus.Labels{
+			"number":   strconv.Itoa(*prInfo.Number),
+			"label":    strings.Join(labelsTag, ","),
+			"author":   *prInfo.User,
+			"reviewer": strings.Join(reviewersTag, ","),
+			"repo":     prInfo.Repo,
+		}
+		PullRequestCount.With(labels).Set(1)
+	}
+
 	return nil
 }
 
