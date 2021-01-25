@@ -82,16 +82,17 @@ func snapshot() error {
 	var labelsTag []string
 	var reviewersTag []string
 
-	labelsTag = []string{}
-
 	for _, prInfo := range prInfos {
 
+		labelsTag = []string{}
+		reviewersTag = []string{}
+
 		for _, label := range prInfo.Labels {
-			labelsTag = append(labelsTag, "label:"+*label.Name)
+			labelsTag = append(labelsTag,*label.Name)
 		}
 
 		for _, reviewer := range prInfo.RequestedReviewers {
-			reviewersTag = append(reviewersTag, "reviewer:"+*reviewer.Login)
+			reviewersTag = append(reviewersTag, *reviewer.Login)
 		}
 
 		labels := prometheus.Labels{
@@ -193,11 +194,11 @@ func generateCustomMetrics(prInfos []PR) ([]datadog.Metric, error) {
 		reviewersTag = []string{}
 
 		for _, label := range prInfo.Labels {
-			labelsTag = append(labelsTag, "label:"+*label.Name)
+			labelsTag = append(labelsTag, *label.Name)
 		}
 
 		for _, reviewer := range prInfo.RequestedReviewers {
-			reviewersTag = append(reviewersTag, "reviewer:"+*reviewer.Login)
+			reviewersTag = append(reviewersTag, *reviewer.Login)
 		}
 
 		labelAndReviewer := append(labelsTag, reviewersTag...)
