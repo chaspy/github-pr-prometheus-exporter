@@ -10,10 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/go-github/github"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-
-	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 )
 
@@ -82,12 +81,11 @@ func snapshot() error {
 	var reviewersTag []string
 
 	for _, prInfo := range prInfos {
-
 		labelsTag = []string{}
 		reviewersTag = []string{}
 
 		for _, label := range prInfo.Labels {
-			labelsTag = append(labelsTag,*label.Name)
+			labelsTag = append(labelsTag, *label.Name)
 		}
 
 		for _, reviewer := range prInfo.RequestedReviewers {
