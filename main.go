@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -22,14 +25,38 @@ type PR struct {
 	Repo               string
 }
 
+var (
+	//nolint:gochecknoglobals
+	desiredReplicas = prometheus.NewGauge(prometheus.GaugeOpts{
+		Namespace: "github_pr",
+		Subsystem: "prometheus_exporter",
+		Name:      "pull_request_count",
+		Help:      "Number of Pull Requests",
+	})
+)
+
 func main() {
-	err := run()
-	if err != nil {
-		log.Fatal(err)
-	}
+	const interval = 10
+
+	prometheus.MustRegister(desiredReplicas)
+
+	http.Handle("/metrics", promhttp.Handler())
+
+	go func() {
+		ticker := time.NewTicker(interval * time.Second)
+
+		// register metrics as background
+		for range ticker.C {
+			err := snapshot()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	}()
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func run() error {
+func snapshot() error {
 	githubToken, err := readGithubConfig()
 	if err != nil {
 		return fmt.Errorf("failed to read Datadog Config: %w", err)
@@ -49,6 +76,7 @@ func run() error {
 
 	prInfos := getPRInfos(prs)
 
+	desiredReplicas.Set(prInfos)
 	return nil
 }
 
