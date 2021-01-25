@@ -1,0 +1,2 @@
+export GITHUB_TOKEN="secret"
+export GITHUB_REPOSITORIES="chaspy/github-pr-prometheus-exporter,chaspy/favsearch"
