@@ -28,12 +28,14 @@ type PR struct {
 
 var (
 	//nolint:gochecknoglobals
-	PullRequestCount = prometheus.NewGauge(prometheus.GaugeOpts{
+	PullRequestCount = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: "github_pr",
 		Subsystem: "prometheus_exporter",
 		Name:      "pull_request_count",
 		Help:      "Number of Pull Requests",
-	})
+	},
+		[]string{"number", "label", "author", "reviewer", "repo"},
+	)
 )
 
 func main() {
