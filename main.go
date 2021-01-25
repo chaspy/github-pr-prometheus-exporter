@@ -14,7 +14,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/google/go-github/github"
-	"github.com/zorkian/go-datadog-api"
 	"golang.org/x/oauth2"
 )
 
