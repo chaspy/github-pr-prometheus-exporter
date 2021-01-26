@@ -17,9 +17,9 @@ import (
 )
 
 type PR struct {
-	Number             *int
+	Number             int
 	Labels             []*github.Label
-	User               *string
+	User               string
 	RequestedReviewers []*github.User
 	Repo               string
 }
@@ -94,9 +94,9 @@ func snapshot() error {
 		}
 
 		labels := prometheus.Labels{
-			"number":   strconv.Itoa(*prInfo.Number),
+			"number":   strconv.Itoa(prInfo.Number),
 			"label":    strings.Join(labelsTag, ","),
-			"author":   *prInfo.User,
+			"author":   prInfo.User,
 			"reviewer": strings.Join(reviewersTag, ","),
 			"repo":     prInfo.Repo,
 		}
@@ -173,12 +173,12 @@ func getPRInfos(prs []*github.PullRequest) []PR {
 	prInfos := make([]PR, len(prs))
 
 	for i, pr := range prs {
-		repos := strings.Split(*pr.URL, "/")
+		repos := strings.Split(pr.GetURL(), "/")
 
 		prInfos[i] = PR{
-			Number:             pr.Number,
+			Number:             pr.GetNumber(),
 			Labels:             pr.Labels,
-			User:               pr.User.Login,
+			User:               pr.User.GetLogin(),
 			RequestedReviewers: pr.RequestedReviewers,
 			Repo:               repos[4] + "/" + repos[5],
 		}
