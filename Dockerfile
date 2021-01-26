@@ -18,4 +18,7 @@ FROM alpine:3.13.0 as runner
 
 COPY --from=builder /go/bin/github-pr-prometheus-exporter /app/github-pr-prometheus-exporter
 
+RUN adduser -D -S -H exporter
+USER exporter
+
 ENTRYPOINT ["/app/github-pr-prometheus-exporter"]
