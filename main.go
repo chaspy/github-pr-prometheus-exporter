@@ -37,14 +37,17 @@ var (
 )
 
 func main() {
-	const interval = 10
+	interval, err := getInterval()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	prometheus.MustRegister(PullRequestCount)
 
 	http.Handle("/metrics", promhttp.Handler())
 
 	go func() {
-		ticker := time.NewTicker(interval * time.Second)
+		ticker := time.NewTicker(time.Duration(interval) * time.Second)
 
 		// register metrics as background
 		for range ticker.C {
@@ -105,6 +108,21 @@ func snapshot() error {
 	}
 
 	return nil
+}
+
+func getInterval() (int, error) {
+	const defaultGithubAPIIntervalSecond = 300
+	githubAPIInterval := os.Getenv("GITHUB_API_INTERVAL")
+	if len(githubAPIInterval) == 0 {
+		return defaultGithubAPIIntervalSecond, nil
+	}
+
+	integerGithubAPIInterval, err := strconv.Atoi(githubAPIInterval)
+	if err != nil {
+		return 0, fmt.Errorf("failed to read Datadog Config: %w", err)
+	}
+
+	return integerGithubAPIInterval, nil
 }
 
 func readGithubConfig() (string, error) {
