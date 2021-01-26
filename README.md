@@ -44,3 +44,6 @@ github_pr_prometheus_exporter_pull_request_count{author="dependabot-preview[bot]
 github_pr_prometheus_exporter_pull_request_count{author="renovate[bot]",label="renovate:datadog,renovate:datadog/2.6.13",number="1798",repo="quipper/kubernetes-clusters",reviewer="chaspy"} 1
 github_pr_prometheus_exporter_pull_request_count{author="renovate[bot]",label="renovate:ingress-nginx,renovate:ingress-nginx/3.20.1",number="1739",repo="quipper/kubernetes-clusters",reviewer="chaspy"} 1
 ```
+## Datadog Autodiscovery
+
+If you use Datadog, you can use [Kubernetes Integration Autodiscovery](https://docs.datadoghq.com/agent/kubernetes/integrations/?tab=kubernetes) feature.
