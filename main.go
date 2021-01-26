@@ -82,19 +82,15 @@ func snapshot() error {
 
 	prInfos := getPRInfos(prs)
 
-	var labelsTag []string
-	var reviewersTag []string
-
 	for _, prInfo := range prInfos {
-		labelsTag = []string{}
-		reviewersTag = []string{}
-
-		for _, label := range prInfo.Labels {
-			labelsTag = append(labelsTag, *label.Name)
+		labelsTag := make([]string, len(prInfo.Labels))
+		for i, label := range prInfo.Labels {
+			labelsTag[i] = *label.Name
 		}
 
-		for _, reviewer := range prInfo.RequestedReviewers {
-			reviewersTag = append(reviewersTag, *reviewer.Login)
+		reviewersTag := make([]string, len(prInfo.RequestedReviewers))
+		for i, reviewer := range prInfo.RequestedReviewers {
+			reviewersTag[i] = *reviewer.Login
 		}
 
 		labels := prometheus.Labels{
@@ -174,18 +170,18 @@ func parseRepositories(repositories string) []string {
 }
 
 func getPRInfos(prs []*github.PullRequest) []PR {
-	prInfos := []PR{}
+	prInfos := make([]PR, len(prs))
 
-	for _, pr := range prs {
+	for i, pr := range prs {
 		repos := strings.Split(*pr.URL, "/")
 
-		prInfos = append(prInfos, PR{
+		prInfos[i] = PR{
 			Number:             pr.Number,
 			Labels:             pr.Labels,
 			User:               pr.User.Login,
 			RequestedReviewers: pr.RequestedReviewers,
 			Repo:               repos[4] + "/" + repos[5],
-		})
+		}
 	}
 
 	return prInfos
