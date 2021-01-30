@@ -30,7 +30,7 @@ Get the binary file from [Releases](https://github.com/chaspy/datadog-github-pr/
 ### Docker
 
 ```
-$ docker run -e GITHUB_TOKEN="${GITHUB_TOKEN}" -e GITHUB_REPOSITORIES="${GITHUB_REPOSITORIES}" chaspy/github-pr-ptometheus-exporter:v0.1.0
+$ docker run -e GITHUB_TOKEN="${GITHUB_TOKEN}" -e GITHUB_REPOSITORIES="${GITHUB_REPOSITORIES}" chaspy/github-pr-prometheus-exporter:v0.1.0
 ```
 
 ## Metrics
