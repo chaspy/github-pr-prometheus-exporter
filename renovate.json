@@ -14,7 +14,7 @@
     {
       "managers": ["gomod"],
       "packagePatterns": [".*"],
-      "updateTypes": ["minor", "patch", "pin"],
+      "updateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true,
       "postUpdateOptions": [
         "gomodTidy"
