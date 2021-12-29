@@ -19,6 +19,11 @@
       "postUpdateOptions": [
         "gomodTidy"
       ]
+    },
+    {
+      "matchManagers": ["dockerfile"],
+      "automerge": true,
+      "matchUpdateTypes": ["minor", "patch", "pin"]
     }
   ]
 }
