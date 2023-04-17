@@ -100,6 +100,7 @@ func snapshot() error {
 			"reviewer": strings.Join(reviewersTag, ","),
 			"repo":     prInfo.Repo,
 		}
+
 		PullRequestCount.With(labels).Set(1)
 	}
 
@@ -138,19 +139,31 @@ func getPullRequests(githubToken string, githubRepositories []string) ([]*github
 	tc := oauth2.NewClient(ctx, ts)
 
 	client := github.NewClient(tc)
+	opt := &github.PullRequestListOptions{
+		ListOptions: github.ListOptions{PerPage: 100},
+	}
 
 	prs := []*github.PullRequest{}
+	allPrsInRepo := []*github.PullRequest{}
 
 	for _, githubRepository := range githubRepositories {
 		repo := strings.Split(githubRepository, "/")
 		org := repo[0]
 		name := repo[1]
-		prsInRepo, _, err := client.PullRequests.List(ctx, org, name, nil)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get GitHub Pull Requests: %w", err)
+
+		for {
+			prsInRepo, resp, err := client.PullRequests.List(ctx, org, name, opt)
+			if err != nil {
+				return nil, fmt.Errorf("failed to get GitHub Pull Requests: %w", err)
+			}
+			allPrsInRepo = append(allPrsInRepo, prsInRepo...)
+			if resp.NextPage == 0 {
+				break
+			}
+			opt.Page = resp.NextPage
 		}
 
-		prs = append(prs, prsInRepo...)
+		prs = append(prs, allPrsInRepo...)
 	}
 
 	return prs, nil
