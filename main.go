@@ -49,6 +49,12 @@ func main() {
 	go func() {
 		ticker := time.NewTicker(time.Duration(interval) * time.Second)
 
+		// register at first time
+		err := snapshot()
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		// register metrics as background
 		for range ticker.C {
 			err := snapshot()
