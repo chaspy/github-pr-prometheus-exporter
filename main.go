@@ -139,8 +139,9 @@ func getPullRequests(githubToken string, githubRepositories []string) ([]*github
 	tc := oauth2.NewClient(ctx, ts)
 
 	client := github.NewClient(tc)
+	const perPage = 100
 	opt := &github.PullRequestListOptions{
-		ListOptions: github.ListOptions{PerPage: 100},
+		ListOptions: github.ListOptions{PerPage: perPage},
 	}
 
 	prs := []*github.PullRequest{}
