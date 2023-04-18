@@ -165,6 +165,7 @@ func getPullRequests(githubToken string, githubRepositories []string) ([]*github
 			}
 			allPrsInRepo = append(allPrsInRepo, prsInRepo...)
 			if resp.NextPage == 0 {
+				opt.Page = 0
 				break
 			}
 			opt.Page = resp.NextPage
