@@ -3,7 +3,6 @@ module github.com/chaspy/github-pr-prometheus-exporter
 go 1.20
 
 require (
-	github.com/google/go-github/v51 v51.0.0
 	github.com/google/go-github/v53 v53.2.0
 	github.com/prometheus/client_golang v1.16.0
 	golang.org/x/oauth2 v0.9.0
