@@ -14,7 +14,7 @@ RUN go build \
     -o /go/bin/github-pr-prometheus-exporter \
     -ldflags '-s -w'
 
-FROM alpine:3.18.4 as runner
+FROM alpine:3.18.5 as runner
 
 COPY --from=builder /go/bin/github-pr-prometheus-exporter /app/github-pr-prometheus-exporter
 
