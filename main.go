@@ -22,6 +22,7 @@ type PR struct {
 	User               string
 	RequestedReviewers []*github.User
 	Repo               string
+	CreatedAt          time.Time
 }
 
 var (
@@ -88,6 +89,7 @@ func snapshot() error {
 
 	prInfos := getPRInfos(prs)
 
+	now := time.Now()
 	for _, prInfo := range prInfos {
 		labelsTag := make([]string, len(prInfo.Labels))
 		for i, label := range prInfo.Labels {
@@ -100,11 +102,12 @@ func snapshot() error {
 		}
 
 		labels := prometheus.Labels{
-			"number":   strconv.Itoa(prInfo.Number),
-			"label":    strings.Join(labelsTag, ","),
-			"author":   prInfo.User,
-			"reviewer": strings.Join(reviewersTag, ","),
-			"repo":     prInfo.Repo,
+			"number":        strconv.Itoa(prInfo.Number),
+			"label":         strings.Join(labelsTag, ","),
+			"author":        prInfo.User,
+			"reviewer":      strings.Join(reviewersTag, ","),
+			"repo":          prInfo.Repo,
+			"lifetime_days": strconv.Itoa(int(now.Sub(prInfo.CreatedAt).Hours() / 24)),
 		}
 
 		PullRequestCount.With(labels).Set(1)
@@ -202,6 +205,7 @@ func getPRInfos(prs []*github.PullRequest) []PR {
 			User:               pr.User.GetLogin(),
 			RequestedReviewers: pr.RequestedReviewers,
 			Repo:               repos[4] + "/" + repos[5],
+			CreatedAt:          *pr.CreatedAt.GetTime(),
 		}
 	}
 
