@@ -135,7 +135,7 @@ func getLifetimeStaleDays() (int, error) {
 
 	integerLifetimeStaleDays, err := strconv.Atoi(lifetimeStaleDays)
 	if err != nil {
-		return 0, fmt.Errorf("failed to read Datadog Config: %w", err)
+		return 0, fmt.Errorf("failed to convert lifetimeStaleDays: %w", err)
 	}
 
 	return integerLifetimeStaleDays, nil
