@@ -33,7 +33,7 @@ var (
 		Name:      "pull_request_count",
 		Help:      "Number of Pull Requests",
 	},
-		[]string{"number", "label", "author", "reviewer", "repo"},
+		[]string{"number", "label", "author", "reviewer", "repo", "lifetime_status"},
 	)
 )
 
