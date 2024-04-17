@@ -1,2 +1,4 @@
 export GITHUB_TOKEN="secret"
 export GITHUB_REPOSITORIES="chaspy/github-pr-prometheus-exporter,chaspy/favsearch"
+# LIFETIME_STALE_DAYS is optional, default is 14 days
+# export LIFETIME_STALE_DAYS=14

@@ -22,6 +22,7 @@ type PR struct {
 	User               string
 	RequestedReviewers []*github.User
 	Repo               string
+	CreatedAt          time.Time
 }
 
 var (
@@ -88,6 +89,12 @@ func snapshot() error {
 
 	prInfos := getPRInfos(prs)
 
+	lifetimeStaleDays, err := getLifetimeStaleDays()
+	if err != nil {
+		return fmt.Errorf("failed to get lifetime stale days: %w", err)
+	}
+	staleThresholdTime := time.Now().Add(-time.Hour * 24 * time.Duration(lifetimeStaleDays))
+
 	for _, prInfo := range prInfos {
 		labelsTag := make([]string, len(prInfo.Labels))
 		for i, label := range prInfo.Labels {
@@ -99,18 +106,39 @@ func snapshot() error {
 			reviewersTag[i] = *reviewer.Login
 		}
 
+		lifetimeStatus := "ok"
+		if prInfo.CreatedAt.Before(staleThresholdTime) {
+			lifetimeStatus = "stale"
+		}
+
 		labels := prometheus.Labels{
-			"number":   strconv.Itoa(prInfo.Number),
-			"label":    strings.Join(labelsTag, ","),
-			"author":   prInfo.User,
-			"reviewer": strings.Join(reviewersTag, ","),
-			"repo":     prInfo.Repo,
+			"number":          strconv.Itoa(prInfo.Number),
+			"label":           strings.Join(labelsTag, ","),
+			"author":          prInfo.User,
+			"reviewer":        strings.Join(reviewersTag, ","),
+			"repo":            prInfo.Repo,
+			"lifetime_status": lifetimeStatus,
 		}
 
 		PullRequestCount.With(labels).Set(1)
 	}
 
 	return nil
+}
+
+func getLifetimeStaleDays() (int, error) {
+	const defaultLifetimeStaleDays = 14
+	lifetimeStaleDays := os.Getenv("LIFETIME_STALE_DAYS")
+	if len(lifetimeStaleDays) == 0 {
+		return defaultLifetimeStaleDays, nil
+	}
+
+	integerLifetimeStaleDays, err := strconv.Atoi(lifetimeStaleDays)
+	if err != nil {
+		return 0, fmt.Errorf("failed to convert lifetimeStaleDays: %w", err)
+	}
+
+	return integerLifetimeStaleDays, nil
 }
 
 func getInterval() (int, error) {
@@ -202,6 +230,7 @@ func getPRInfos(prs []*github.PullRequest) []PR {
 			User:               pr.User.GetLogin(),
 			RequestedReviewers: pr.RequestedReviewers,
 			Repo:               repos[4] + "/" + repos[5],
+			CreatedAt:          *pr.CreatedAt.GetTime(),
 		}
 	}
 
