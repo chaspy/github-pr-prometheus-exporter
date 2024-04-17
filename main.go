@@ -89,7 +89,12 @@ func snapshot() error {
 
 	prInfos := getPRInfos(prs)
 
-	now := time.Now()
+	lifetimeStaleDays, err := getLifetimeStaleDays()
+	if err != nil {
+		return fmt.Errorf("failed to get lifetime stale days: %w", err)
+	}
+	staleThresholdTime := time.Now().Add(-time.Hour * 24 * time.Duration(lifetimeStaleDays))
+
 	for _, prInfo := range prInfos {
 		labelsTag := make([]string, len(prInfo.Labels))
 		for i, label := range prInfo.Labels {
@@ -101,19 +106,39 @@ func snapshot() error {
 			reviewersTag[i] = *reviewer.Login
 		}
 
+		lifetimeStatus := "ok"
+		if prInfo.CreatedAt.Before(staleThresholdTime) {
+			lifetimeStatus = "stale"
+		}
+
 		labels := prometheus.Labels{
-			"number":        strconv.Itoa(prInfo.Number),
-			"label":         strings.Join(labelsTag, ","),
-			"author":        prInfo.User,
-			"reviewer":      strings.Join(reviewersTag, ","),
-			"repo":          prInfo.Repo,
-			"lifetime_days": strconv.Itoa(int(now.Sub(prInfo.CreatedAt).Hours() / 24)),
+			"number":          strconv.Itoa(prInfo.Number),
+			"label":           strings.Join(labelsTag, ","),
+			"author":          prInfo.User,
+			"reviewer":        strings.Join(reviewersTag, ","),
+			"repo":            prInfo.Repo,
+			"lifetime_status": lifetimeStatus,
 		}
 
 		PullRequestCount.With(labels).Set(1)
 	}
 
 	return nil
+}
+
+func getLifetimeStaleDays() (int, error) {
+	const defaultLifetimeStaleDays = 14
+	lifetimeStaleDays := os.Getenv("LIFETIME_STALE_DAYS")
+	if len(lifetimeStaleDays) == 0 {
+		return defaultLifetimeStaleDays, nil
+	}
+
+	integerLifetimeStaleDays, err := strconv.Atoi(lifetimeStaleDays)
+	if err != nil {
+		return 0, fmt.Errorf("failed to read Datadog Config: %w", err)
+	}
+
+	return integerLifetimeStaleDays, nil
 }
 
 func getInterval() (int, error) {
