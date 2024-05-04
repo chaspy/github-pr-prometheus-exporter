@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/google/go-github/v53 v53.2.0
 	github.com/prometheus/client_golang v1.19.0
-	golang.org/x/oauth2 v0.19.0
+	golang.org/x/oauth2 v0.20.0
 )
 
 require (
