@@ -7,7 +7,7 @@ toolchain go1.24.0
 require (
 	github.com/google/go-github/v53 v53.2.0
 	github.com/prometheus/client_golang v1.21.1
-	golang.org/x/oauth2 v0.27.0
+	golang.org/x/oauth2 v0.28.0
 )
 
 require (
