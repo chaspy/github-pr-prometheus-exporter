@@ -1,13 +1,13 @@
 module github.com/chaspy/github-pr-prometheus-exporter
 
-go 1.24.0
+go 1.25.0
 
 toolchain go1.26.1
 
 require (
 	github.com/google/go-github/v53 v53.2.0
 	github.com/prometheus/client_golang v1.23.2
-	golang.org/x/oauth2 v0.35.0
+	golang.org/x/oauth2 v0.36.0
 )
 
 require (
