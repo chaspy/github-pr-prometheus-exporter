@@ -6,7 +6,7 @@ toolchain go1.26.5
 
 require (
 	github.com/google/go-github/v53 v53.2.0
-	github.com/prometheus/client_golang v1.24.0
+	github.com/prometheus/client_golang v1.24.1
 	golang.org/x/oauth2 v0.36.0
 )
 
@@ -18,7 +18,7 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
-	github.com/prometheus/common v0.70.0 // indirect
+	github.com/prometheus/common v0.70.1 // indirect
 	github.com/prometheus/procfs v0.21.1 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
