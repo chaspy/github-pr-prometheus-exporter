@@ -2,7 +2,7 @@ module github.com/chaspy/github-pr-prometheus-exporter
 
 go 1.25.0
 
-toolchain go1.26.5
+toolchain go1.26.6
 
 require (
 	github.com/google/go-github/v53 v53.2.0
